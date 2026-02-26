@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Webcam from "react-webcam";
 
 export default function CinematicCognitiveUI() {
@@ -8,12 +8,11 @@ export default function CinematicCognitiveUI() {
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [history, setHistory] = useState([]);
 
-const speak = (text) => {
+const speak = useCallback((text) => {
   if (!voiceEnabled) return;
 
   const voices = speechSynthesis.getVoices();
 
-  // Pick best natural voice
   const preferred =
     voices.find(v => v.name.includes("Google")) ||
     voices.find(v => v.name.includes("Microsoft")) ||
@@ -21,15 +20,14 @@ const speak = (text) => {
 
   const utter = new SpeechSynthesisUtterance(text);
   utter.voice = preferred;
-
-  // Human tuning
   utter.rate = 0.92;
   utter.pitch = 1.05;
   utter.volume = 1;
 
   speechSynthesis.cancel();
   speechSynthesis.speak(utter);
-};
+}, [voiceEnabled]);
+
 
 const humanizeThought = (thought) => {
   const objects = thought.pipeline.perception.objects;
@@ -73,7 +71,7 @@ setLoading(false); // 🔥 stop loader
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [lastSpoken, voiceEnabled, speak]);
+  }, [lastSpoken ,speak]);
 
   const confidence = thought
     ? Math.round(thought.pipeline.uncertainty.overall * 100)
