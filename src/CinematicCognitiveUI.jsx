@@ -73,7 +73,7 @@ setLoading(false); // 🔥 stop loader
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [lastSpoken, voiceEnabled]);
+  }, [lastSpoken, voiceEnabled, speak]);
 
   const confidence = thought
     ? Math.round(thought.pipeline.uncertainty.overall * 100)
